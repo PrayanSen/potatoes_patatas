@@ -43,9 +43,9 @@ const cities = {
 // Get coordinates from the city name
   // Generic function to get coordinates for a given location object
   const getCoordinates = (location) => {
-    if (location.value && location.value.lat && location.value.lng) {
+    if (location && location.value && location.value.lat && location.value.lng) {
       return [location.value.lat, location.value.lng];
-    } else if (location.label && cities[location.label]) {
+    } else if (location && location.label && cities[location.label]) {
       return [cities[location.label].value.lat, cities[location.label].value.lng];
     }
     return null; // Return null if nothing is applicable
@@ -329,6 +329,24 @@ const scrollToFlightDetail = (id) => {
         {routes.map((route, index) => (
           <div key={`route-${index}`} className="route-card">
             <h4>Route {index + 1}</h4>
+            {Object.entries(route).map(([key, value]) => {
+              if (key !== "flights") { // Skip the 'flights' key
+                let routeDisplayValue;
+                // Check if value is an object and handle it appropriately
+                if (typeof value === 'object' && value !== null) {
+                  // Assuming 'value' might be an object with properties 'label' and 'value'
+                  routeDisplayValue = `${value.label} (${value.value.lat}, ${value.value.lng})`; // Format if it's an object with specific structure
+                } else {
+                  routeDisplayValue = value; // It's not an object, so display it directly
+                }
+                return (
+                  <p key={`route-${index}-${key}`}>
+                    <strong>{key[0].toUpperCase() + key.slice(1)}:</strong> {routeDisplayValue}
+                  </p>
+                );
+              }
+              return null; // Return null for 'flights' to avoid rendering anything
+            })}
             {route.flights.map((flight, idx) => (
               // <div key={`route-${index}-flight-${idx}`} className="flight-card">
               <div
