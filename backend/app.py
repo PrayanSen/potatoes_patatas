@@ -23,6 +23,29 @@ should_send_updates = False
 
 CORS(app)  
 
+
+
+cities = {
+    'Barcelona': {"label": "Barcelona", "value": {"lat": 41.2971, "lng": 2.07846}},
+    'Paris': {"label": "Paris", "value": {"lat": 49.454399, "lng": 2.11278}},
+    'Rome': {"label": "Rome", "value": {"lat": 53.745098, "lng": -2.88306}},
+    'Amsterdam': {"label": "Amsterdam", "value": {"lat": 52.308601, "lng": 4.76389}},
+    'Munich': {"label": "Munich", "value": {"lat": 48.353802, "lng": 11.7861}},
+    'London': {"label": "London", "value": {"lat": 51.874699, "lng": -0.368333}},
+    'Prague': {"label": "Prague", "value": {"lat": 50.1008, "lng": 14.26}},
+    'Madrid': {"label": "Madrid", "value": {"lat": 40.471926, "lng": -3.56264}},
+    'Vienna': {"label": "Vienna", "value": {"lat": 48.110298, "lng": 16.5697}},
+    'Berlin': {"label": "Berlin", "value": {"lat": 52.362247, "lng": 13.500672}},
+    'Lisbon': {"label": "Lisbon", "value": {"lat": 38.7813, "lng": -9.13592}},
+    'Budapest': {"label": "Budapest", "value": {"lat": 47.42976, "lng": 19.261093}},
+    'Brussels': {"label": "Brussels", "value": {"lat": 50.901402, "lng": 4.48444}},
+    'Dublin': {"label": "Dublin", "value": {"lat": 53.428713, "lng": -6.262121}},
+    'Milan': {"label": "Milan", "value": {"lat": 45.673901, "lng": 9.70417}},
+    'Florence': {"label": "Florence", "value": {"lat": 43.7696, "lng": 11.2558}},
+    'Zurich': {"label": "Zurich", "value": {"lat": 47.3769, "lng": 8.5417}}
+}
+
+
 def read_graph(graph_path):
     global G1
 
@@ -42,12 +65,50 @@ def read_graph(graph_path):
     return G1
 
 
+def find_matching_city(G, input_city):
+    """Return the first city in the graph that contains the input_city substring, or None if no match is found."""
+    for node in G.nodes:
+        if input_city in node:
+            return node
+    return None  # or any appropriate value indicating no match was found
 
-def find_matching_cities(G, input_city):
+def find_transit_routes(G, source, destination):
     """
-    Return a list of cities in the graph that contain the input_city substring, case-sensitive.
+    Find all routes from matching source to destination cities with possible transits
     """
-    return [node for node in G.nodes if input_city in node]
+    source_match = find_matching_city(G, source)
+    destination_match = find_matching_city(G, destination)
+    all_routes = []
+    route_id = 1  
+    if source_match is None or destination_match is None:
+        return None # or return old dummy data with direct flight
+
+    if G.has_edge(source_match, destination_match):
+        all_routes.append({
+            "route_id": route_id,
+            "flights": [{"origin": cities[source_match], "destination": cities[destination_match]}]
+        })
+        route_id += 1
+    # Transit routes
+
+    paths = list(nx.all_simple_paths(G, source_match, destination_match))
+    for path in paths:
+        if 3<= len(path) <= 4:  # Exclude direct flights
+            route_flights = []
+            for i in range(len(path) - 1):
+                route_flights.append({"origin": cities[path[i]], "destination": cities[path[i+1]]})
+            all_routes.append({
+                "route_id": route_id, 
+                "flights": route_flights
+            })
+            route_id += 1
+
+    # Sort routes by the number of trips
+    # all_routes.sort(key=lambda x: x['route_id'])
+
+    return all_routes
+
+
 
 def has_direct_route(G, source, destination):
     """
@@ -63,24 +124,7 @@ def has_direct_route(G, source, destination):
                 return True
     return False
 
-def find_transit_routes(G, source, destination):
-    """
-    Find all routes from matching source to destination cities with possible transits.
-    """
-    source_matches = find_matching_cities(G, source)
-    destination_matches = find_matching_cities(G, destination)
-    all_routes = []
-    for src in source_matches:
-        for dest in destination_matches:
-            paths = list(nx.all_simple_paths(G, src, dest))
-            #paths_reverse = list(nx.all_simple_paths(G,dest,src))
-            #print(paths)
-            #print(paths_reverse)
-            for path in paths:
-                if 3 <= len(path) <= 4:
-                    formatted_path = " -> ".join(path)
-                    all_routes.append(formatted_path)
-    return paths
+
 @app.route('/search-cities', methods=['GET'])
 def search_cities():
     print("API Request for city query sent")
@@ -112,23 +156,7 @@ def get_routes():
     print(f"{origin=}")
     # istanbul_mid = {"label": "Istanbul", "value": {"lat": 41.015137, "lng": 28.979530} }
     # belgrade_mid = {"label": "Belgrade", "value": {"lat": 44.786568, "lng": 20.448922} }
-    cities = {
-        'Barcelona': {"label": "Barcelona", "value": {"lat": 41.2971, "lng": 2.07846}},
-        'Paris': {"label": "Paris", "value": {"lat": 49.454399, "lng": 2.11278}},
-        'Rome': {"label": "Rome", "value": {"lat": 53.745098, "lng": -2.88306}},
-        'Amsterdam': {"label": "Amsterdam", "value": {"lat": 52.308601, "lng": 4.76389}},
-        'Munich': {"label": "Munich", "value": {"lat": 48.353802, "lng": 11.7861}},
-        'London': {"label": "London", "value": {"lat": 51.874699, "lng": -0.368333}},
-        'Prague': {"label": "Prague", "value": {"lat": 50.1008, "lng": 14.26}},
-        'Madrid': {"label": "Madrid", "value": {"lat": 40.471926, "lng": -3.56264}},
-        'Vienna': {"label": "Vienna", "value": {"lat": 48.110298, "lng": 16.5697}},
-        'Berlin': {"label": "Berlin", "value": {"lat": 52.362247, "lng": 13.500672}},
-        'Lisbon': {"label": "Lisbon", "value": {"lat": 38.7813, "lng": -9.13592}},
-        'Budapest': {"label": "Budapest", "value": {"lat": 47.42976, "lng": 19.261093}},
-        'Brussels': {"label": "Brussels", "value": {"lat": 50.901402, "lng": 4.48444}},
-        'Dublin': {"label": "Dublin", "value": {"lat": 53.428713, "lng": -6.262121}},
-        'Milan': {"label": "Milan", "value": {"lat": 45.673901, "lng": 9.70417}}
-    }
+
 
     # for every city in graph, check if it is in 
     source = find_city_substring(G1, origin["label"])
@@ -141,25 +169,9 @@ def get_routes():
         for node in G1.nodes():
             print(node)
 
-    if has_direct_route(G1, source, destin):
-        print(f"There is a direct route from {source} to {destin}.")
-        print("additional steps: ")
-        transit_routes = find_transit_routes(G1, source, destin)
-        print("Possible transit routes found:")
-        for route in transit_routes:
-            print(route)
-    else:
-        print("No direct route found. Checking for transit routes...")
-        transit_routes = find_transit_routes(G1, source, destin)
-        if transit_routes:
-            print("Possible transit routes found:")
-            for route in transit_routes:
-                if 3 <= len(route) <= 4:
-                    print(route)
-        else:
-            print("No possible transit routes found.")
 
-
+    transit_routes = find_transit_routes(G1, source, destin)
+    return make_response(transit_routes)
 
 
     routes = [

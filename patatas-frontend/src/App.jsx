@@ -12,6 +12,14 @@ import {useMap, MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-l
 import axios from 'axios';
 import 'leaflet-polylinedecorator';
 // Define marker icons
+
+
+const colors = ["red", "blue", "green", "purple", "orange", "cyan", "magenta", "lime", "pink", "teal"]; // Extend this list based on the expected number of routes
+
+function getColor(index) {
+  return colors[index % colors.length]; // Loop through the colors array cyclically
+}
+
 const startIcon = new L.Icon({
   iconUrl: startMarkerImg, // ensure you have this image in your public folder or imported
   iconSize: [25, 41],
@@ -231,7 +239,8 @@ const scrollToFlightDetail = (id) => {
                 <Polyline
                   key={`${routeIndex}-${flightIndex}`}
                   positions={[flightOrigin, flightDestination]}
-                  color={routeIndex % 2 ? "blue" : "red"}
+                  // color={routeIndex % 2 ? "blue" : "red"}
+                  color={getColor(routeIndex)} // Apply dynamic color
                   weight={5}
                   dashArray="10, 20" // Larger gaps than dashes, can adjust for more noticeable direction
                   dashOffset="0"
