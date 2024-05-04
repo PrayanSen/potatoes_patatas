@@ -205,7 +205,7 @@ const scrollToFlightDetail = (id) => {
         <a href="https://www.thespanishchef.com/recipes/the-ultimate-patatas-bravas" target="_blank">
           <img src={startMarkerImg} className="logo" alt="Vite logo" />
         </a>
-        <h1>TravelAdjuster</h1>
+        <h1>TravelPotato</h1>
         <a href="https://www.thespanishchef.com/recipes/the-ultimate-patatas-bravas" target="_blank">
           <img src={endMarkerImg} className="logo react" alt="React logo" />
         </a>
