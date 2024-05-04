@@ -202,12 +202,12 @@ const scrollToFlightDetail = (id) => {
   return (
     <div className="App">
       <div className="head-container">
-        <a href="https://www.thespanishchef.com/recipes/the-ultimate-patatas-bravas" target="_blank">
-          <img src={startMarkerImg} className="logo" alt="Vite logo" />
+        <a href="https://www.fcbarcelona.com/en/" target="_blank">
+          <img src={startMarkerImg} className="logo" alt="Left logo" />
         </a>
         <h1>TravelPotato</h1>
         <a href="https://www.thespanishchef.com/recipes/the-ultimate-patatas-bravas" target="_blank">
-          <img src={endMarkerImg} className="logo react" alt="React logo" />
+          <img src={endMarkerImg} className="logo react" alt="Right logo" />
         </a>
       </div>
       <div className='select-container'>
