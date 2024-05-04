@@ -10,6 +10,7 @@ import lukasTotal from '/total.svg'
 import hotelBudget from '/budget.svg'
 import hotelNormal from '/normal.svg'
 import hotelExpensive from '/expensive.svg'
+import CreatableSelect from 'react-select/creatable';
 
 import './App.css';
 import {useMap, MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
@@ -88,6 +89,8 @@ function App() {
   const [routes, setRoutes] = useState([]);
   const [activeRoute, setActiveRoute] = useState(null);
   const [hoveredIcon, setHoveredIcon] = useState('');
+  const [visibleRoutes, setVisibleRoutes] = useState({});  // State to manage visibility of each route
+  const [activeRouteIndex, setActiveRouteIndex] = useState(null); // Track the index of the active route
 
 
   const fetchCities = async (inputValue) => {
@@ -112,6 +115,21 @@ function App() {
 
   const handleDestinationChange = selectedOption => {
     setDestination(selectedOption);
+  };
+  const handleRouteClick = (routeIndex, flightIndex) => {
+    const routeKey = `route-${routeIndex}-flight-${flightIndex}`;
+
+    // Check if the same route is being clicked
+    if (routeIndex === activeRouteIndex) {
+      // Reset active route and index if the same route is clicked again
+      setActiveRoute(null);
+      setActiveRouteIndex(null);
+    } else {
+      // Set the active route and index
+      setActiveRoute(routeKey);
+      setActiveRouteIndex(routeIndex);
+      scrollToFlightDetail(routeKey);
+    }
   };
 
   
@@ -162,7 +180,7 @@ const scrollToFlightDetail = (id) => {
         </a>
       </div>
       <div className='select-container'>
-        <AsyncSelect
+        {/* <AsyncSelect
           className='selection'
           cacheOptions
           loadOptions={fetchCities}
@@ -180,7 +198,25 @@ const scrollToFlightDetail = (id) => {
           onChange={handleDestinationChange}
           placeholder="Select destination..."
           styles={customStyles}
+        /> */}
+
+        <CreatableSelect
+          className='selection'
+          isClearable
+          cacheOptions
+          loadOptions={fetchCities}
+          onChange={handleOriginChange}
+          placeholder="Select or type origin..."
         />
+        <CreatableSelect
+          className='selection'
+          isClearable
+          cacheOptions
+          loadOptions={fetchCities}
+          onChange={handleDestinationChange}
+          placeholder="Select or type destination..."
+        />
+
         <button onClick={fetchRoutes}>Find Routes</button>
 
       </div>
@@ -188,88 +224,69 @@ const scrollToFlightDetail = (id) => {
       <br/>
       <MapContainer center={[50, 10]} zoom={4} scrollWheelZoom={true} style={{ height: '70vh', width: '100%' }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {origin && origin.value && (
+        {origin && origin.value && origin.value.lat && origin.value.lng &&(
           <Marker position={[origin.value.lat, origin.value.lng]} icon={startIcon}>
             <Popup>
               Start of Trip
             </Popup>
           </Marker>
         )}
-        {destination && destination.value && (
+        {destination && destination.value && destination.value.lat && destination.value.lng &&(
           <Marker position={[destination.value.lat, destination.value.lng]} icon={endIcon}>
             <Popup>
               End of Trip
             </Popup>
           </Marker>
         )}
-        {routes && routes.map((route, routeIndex) => route.flights?.slice(1).map((stop, stopIndex) => (
-          <Marker key={`stop-${routeIndex}-${stopIndex}`} position={[stop.origin.value.lat, stop.origin.value.lng]} icon={orangeIcon}>
-            <Popup>{stop.origin.label}</Popup>
-          </Marker>
-        )))}
-        {routes.map((route, routeIndex) => (
+{routes && routes.map((route, routeIndex) => 
+  route.flights?.slice(1).map((stop, stopIndex) => (
+    <Marker key={`stop-${routeIndex}-${stopIndex}`} position={[stop.origin.value.lat, stop.origin.value.lng]} icon={orangeIcon}>
+      <Popup>
+        {console.log(stop.origin)}
+        {Object.entries(stop.origin)
+          .filter(([key]) => key !== 'value' && key !== 'malue')  // Filter out 'value' and 'malue' keys
+          .map(([key, value], index) => (
+            <div key={index}>
+              <b>{key}:</b> {value}  
+            </div>
+          ))
+        }
+      </Popup>
+    </Marker>
+)))}
+        {routes.map((route, routeIndex) =>
           route.flights.map((flight, flightIndex) => {
-            // Determine the correct origin and destination for each flight
-            console.log(flight);
-            console.log(`${routeIndex}-${flightIndex}`);
-
-            // const flightOrigin = flightIndex === 0 ? [origin.value.lat, origin.value.lng] : [route.flights[flightIndex - 1].destination.value.lat, route.flights[flightIndex - 1].destination.value.lng];
-            // const flightDestination = [flight.value.lat, flight.value.lng];
             let flightOrigin = [flight.origin.value.lat, flight.origin.value.lng];
             let flightDestination = [flight.destination.value.lat, flight.destination.value.lng];
+            const flightKey = `route-${routeIndex}-flight-${flightIndex}`;
 
-            const flightKey = `flight-${routeIndex}-${flightIndex}`;
-
-            return (
-              // <PolylineWithArrows
-              //   key={`${routeIndex}-${flightIndex}`}
-              //   positions={[flightOrigin, flightDestination]}
-              //   color={routeIndex % 2 ? "blue" : "red"}
-              //   eventHandlers={{
-              //     click: () => {
-              //       setActiveRoute(`route-${routeIndex}-flight-${flightIndex}`);
-              //       scrollToFlightDetail(`route-${routeIndex}-flight-${flightIndex}`);
-              //     }
-              //   }}
-              // >
-              //   <Popup>
-              //     {`Flight from ${flight.origin.label} to ${flight.destination.label}`}
-              //     <br />
-              //     {`Departure: ${flight.departure}, Arrival: ${flight.arrival}`}
-              //   </Popup>
-              // </PolylineWithArrows>
-              
-              <React.Fragment key={flightKey}>  
-
+            // Render polyline only if its route is the active route or no route is active
+            if (routeIndex === activeRouteIndex || activeRouteIndex === null) {
+              return (
                 <Polyline
-                  key={`${routeIndex}-${flightIndex}`}
+                  key={flightKey}
                   positions={[flightOrigin, flightDestination]}
-                  // color={routeIndex % 2 ? "blue" : "red"}
-                  color={getColor(routeIndex)} // Apply dynamic color
+                  color={getColor(routeIndex)}
                   weight={5}
-                  dashArray="10, 20" // Larger gaps than dashes, can adjust for more noticeable direction
-                  dashOffset="0"
+                  dashArray="10, 20"
                   eventHandlers={{
-                    click: () => {
-                      setActiveRoute(`route-${routeIndex}-flight-${flightIndex}`);
-                      scrollToFlightDetail(`route-${routeIndex}-flight-${flightIndex}`);
-                    }
+                    click: () => handleRouteClick(routeIndex, flightIndex)
                   }}
                 >
-                  
                   <Popup>
                     {`Flight from ${flight.origin.label} to ${flight.destination.label}`}
                     <br />
-                    {`Departure: ${flight.departure}, Arrival: ${flight.arrival}`}
+                    {/* {`Departure: ${flight.departure}, Arrival: ${flight.arrival}`} */}
                   </Popup>
                 </Polyline>
-
-            </React.Fragment>
-
-            );
+              );
+            }
+            return null;
           })
-        ))}
+        )}
       </MapContainer>
+
+
 
       <div className="route-details-container">
         {routes.map((route, index) => (

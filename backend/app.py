@@ -45,6 +45,80 @@ cities = {
     'Zurich': {"label": "Zurich", "value": {"lat": 47.3769, "lng": 8.5417}}
 }
 
+events_by_city = {
+    "Barcelona": [
+        "La Mercè Festival - Usually held from September 20th to 24th.",
+        "Primavera Sound Festival - Usually held in late May or early June.",
+        "Sonar Festival - Usually held in June."
+    ],
+    "Paris": [
+        "Bastille Day (July 14th) - National holiday with festivities including fireworks and parades.",
+        "Paris Fashion Week - Typically held in February/March and September/October.",
+        "Nuit Blanche - Annual all-night arts festival held in October."
+    ],
+    "Amsterdam": [
+        "King's Day (Koningsdag) - Celebrated on April 27th.",
+        "Amsterdam Dance Event (ADE) - Typically held in October.",
+        "Keukenhof Flower Exhibition - Usually open from late March to mid-May."
+    ],
+    "Munich": [
+        "Oktoberfest - Usually held from late September to the first weekend in October.",
+        "Tollwood Winter Festival - Typically held from late November to December.",
+        "Munich Christmas Market - Usually open from late November to December."
+    ],
+    "London": [
+        "Notting Hill Carnival - Typically held on the August bank holiday weekend.",
+        "Wimbledon Championships - Usually held in late June and early July.",
+        "London Fashion Week - Held twice a year in February/March and September/October."
+    ],
+    "Madrid": [
+        "San Isidro Festival - Celebrated in May with various events throughout the month.",
+        "Madrid Pride Parade (Orgullo) - Usually held in late June.",
+        "FITUR (International Tourism Fair) - Typically held in January."
+    ],
+    "Vienna": [
+        "Vienna Opera Ball - Usually held in late February.",
+        "Vienna Film Festival (Viennale) - Typically held in October.",
+        "Vienna Christmas Market - Usually open from mid-November to December."
+    ],
+    "Berlin": [
+        "Berlinale (Berlin International Film Festival) - Typically held in February.",
+        "Christopher Street Day (CSD Berlin) - Berlin's Pride parade, usually held in late July.",
+        "Festival of Lights - Usually held in October."
+    ],
+    "Lisbon": [
+        "Festas de Lisboa (Lisbon Festivities) - Celebrated throughout June.",
+        "NOS Alive Festival - Usually held in July.",
+        "Lisbon International Film Festival (LEFFEST) - Typically held in November."
+    ],
+    "Budapest": [
+        "Budapest Wine Festival - Usually held in September.",
+        "Sziget Festival - One of Europe's largest music festivals, typically held in August.",
+        "Budapest Spring Festival - Usually held in March/April."
+    ],
+    "Brussels": [
+        "Brussels Flower Carpet - A biennial event usually held in August.",
+        "Brussels Christmas Market - Usually open from late November to December.",
+        "Brussels Jazz Festival - Typically held in May."
+    ],
+    "Dublin": [
+        "St. Patrick's Day Festival - Celebrated on March 17th.",
+        "Dublin Horse Show - Typically held in August.",
+        "Dublin Fringe Festival - Usually held in September."
+    ],
+    "Zurich": [
+        "Street Parade - Europe's largest techno party, typically held in August.",
+        "Zurich Film Festival - Usually held in September.",
+        "Zurich Christmas Market - Usually open from late November to December."
+    ],
+    "Milan": [
+        "Milan Fashion Week - Typically held in February/March and September/October.",
+        "Milan Design Week (Salone del Mobile) - Usually held in April.",
+        "Festa del Naviglio - A cultural festival usually held in June along the Naviglio Grande canal."
+    ]
+}
+
+
 
 def read_graph(graph_path):
     global G1
@@ -82,7 +156,9 @@ def find_transit_routes(G, source, destination):
     route_id = 1  
     if source_match is None or destination_match is None:
         return None # or return old dummy data with direct flight
-
+    
+    cities[source_match]['Events'] = events_by_city[source_match]
+    print(f"{cities[source_match]}")
     if G.has_edge(source_match, destination_match):
         all_routes.append({
             "route_id": route_id,
@@ -96,6 +172,8 @@ def find_transit_routes(G, source, destination):
         if 3<= len(path) <= 4:  # Exclude direct flights
             route_flights = []
             for i in range(len(path) - 1):
+                if path[i] in events_by_city:
+                    cities[path[i]]['Events'] = events_by_city[path[i]]
                 route_flights.append({"origin": cities[path[i]], "destination": cities[path[i+1]]})
             all_routes.append({
                 "route_id": route_id, 
@@ -110,24 +188,10 @@ def find_transit_routes(G, source, destination):
 
 
 
-def has_direct_route(G, source, destination):
-    """
-    Check if there is a direct route between any matching source and destination cities.
-    """
-    source_matches = find_matching_cities(G, source)
-    destination_matches = find_matching_cities(G, destination)
-    for src in source_matches:
-        for dest in destination_matches:
-            if G.has_edge(src, dest):
-                return True
-            elif G.has_edge(dest,src):
-                return True
-    return False
-
 
 @app.route('/search-cities', methods=['GET'])
 def search_cities():
-    print("API Request for city query sent")
+    # print("API Request for city query sent")
     query = request.args.get('query')
     url = f'https://api.opencagedata.com/geocode/v1/json?q={query}&key={opencage_api_key}'
     try:
@@ -149,11 +213,11 @@ def get_routes():
     global G1
 
     data = request.get_json() 
-    print(f"{data=}")
+    # print(f"{data=}")
     origin = data.get('origin')
     destination = data.get('destination')
 
-    print(f"{origin=}")
+    # print(f"{origin=}")
     # istanbul_mid = {"label": "Istanbul", "value": {"lat": 41.015137, "lng": 28.979530} }
     # belgrade_mid = {"label": "Belgrade", "value": {"lat": 44.786568, "lng": 20.448922} }
 
@@ -161,13 +225,13 @@ def get_routes():
     # for every city in graph, check if it is in 
     source = find_city_substring(G1, origin["label"])
     destin = find_city_substring(G1, destination["label"])
-    if source:
-        print(f"Node '{source}' contains substring of.")
-    else:
-        print("No node contains the city as a substring.")
-        print(f"{source,G1=}")
-        for node in G1.nodes():
-            print(node)
+    # if source:
+    #     # print(f"Node '{source}' contains substring of.")
+    # else:
+    #     # print("No node contains the city as a substring.")
+    #     # print(f"{source,G1=}")
+    #     for node in G1.nodes():
+    #         # print(node)
 
 
     transit_routes = find_transit_routes(G1, source, destin)
