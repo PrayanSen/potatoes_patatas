@@ -31,24 +31,14 @@ const endIcon = new L.Icon({
 
 // Define orange marker icon
 const orangeIcon = new L.Icon({
-  iconUrl: '/Orange_Arrow_Down.svg',  // Make sure to have this SVG in your public folder or properly imported
+  iconUrl: 'Orange_Circle.svg',  // Make sure to have this SVG in your public folder or properly imported
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
 
-function createNumberIcon(number) {
-  const icon = L.divIcon({
-    className: 'custom-number-icon', // Custom class for additional styling
-    html: `<div style="background-color: white; border: 1px solid black; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-            ${number}
-           </div>`, // HTML content for the icon
-    iconSize: [30, 30], // Size of the icon
-    iconAnchor: [15, 15], // Anchor position to properly position the icon
-  });
-  return icon;
-}
+
 const PolylineWithArrows = ({ positions, color }) => {
   const map = useMap();
 
@@ -85,22 +75,8 @@ function App() {
   const [origin, setOrigin] = useState({});
   const [routes, setRoutes] = useState([]);
   const [activeRoute, setActiveRoute] = useState(null);
-  const [markedPositions, setMarkedPositions] = useState([]);
-  const isPositionMarked = (lat, lng) => {
-    const precision = 0.00001; // Fine-tune precision as needed
-    const marked = markedPositions.some(pos =>
-      Math.abs(pos.lat - lat) < precision && Math.abs(pos.lng - lng) < precision
-    );
-    if (marked) {
-      console.log(`Position already marked: (${lat}, ${lng})`);
-    }
-    return marked;
-  };
 
-  const addMarkedPosition = (lat, lng) => {
-    console.log(`Adding marked position: (${lat}, ${lng})`);
-    setMarkedPositions(current => [...current, { lat, lng }]);
-  };
+
   const fetchCities = async (inputValue) => {
     if (!inputValue) return [];
     try {
@@ -129,8 +105,6 @@ function App() {
   const fetchRoutes = async () => {
     
     if (origin && origin.value && destination && destination.value) {
-        setMarkedPositions([]);
-
         try {
             const response = await axios.post('http://localhost:5000/get-routes', {
                 origin: origin,
@@ -215,26 +189,11 @@ const scrollToFlightDetail = (id) => {
             </Popup>
           </Marker>
         )}
-        {/* TODO fix adding Intermediate markers */}
-        {/* {routes.map((route, routeIndex) => (
-          route.flights.map((nodeFlight, nodeIndex) => {
-            console.log(markedPositions);
-            if (nodeIndex > 0 && !isPositionMarked(nodeFlight.origin.value.lat, nodeFlight.origin.value.lng)) {
-              console.log("Adding new orange marker")
-              addMarkedPosition(nodeFlight.origin.value.lat, nodeFlight.origin.value.lng);
-              return (
-                // <Marker key={`node-${routeIndex}-${flightIndex}-${nodeIndex}`} position={[nodeFlight.origin.value.lat, nodeFlight.origin.value.lng]} icon={endMarkerImg}>
-                //   <Popup>{`Intermediate Origin of Flight ${nodeIndex + 1}`}</Popup>
-                // </Marker>
-                <Marker key={`node-${routeIndex}-${nodeIndex}`} position={[nodeFlight.destination.value.lat, nodeFlight.destination.value.lng]} icon={startIcon}>
-                  <Popup>
-                      Intermediate Step
-                  </Popup>
-                </Marker>
-              );
-            }
-          })
-        ))} */}
+        {routes && routes.map((route, routeIndex) => route.flights?.slice(1).map((stop, stopIndex) => (
+          <Marker key={`stop-${routeIndex}-${stopIndex}`} position={[stop.origin.value.lat, stop.origin.value.lng]} icon={orangeIcon}>
+            <Popup>{stop.origin.label}</Popup>
+          </Marker>
+        )))}
         {routes.map((route, routeIndex) => (
           route.flights.map((flight, flightIndex) => {
             // Determine the correct origin and destination for each flight
