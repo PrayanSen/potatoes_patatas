@@ -387,7 +387,7 @@ const scrollToFlightDetail = (id) => {
           />
           <div className='svg-content' style={{display: hoveredIcon === 'icon1' ? 'block' : 'none'}}>
             <h1>20 - 50 Eur</h1>
-            <p>Economic Option</p>
+            <h3>Economic Option</h3>
           </div>
         </div>
         <div className="svg-im">
@@ -400,7 +400,7 @@ const scrollToFlightDetail = (id) => {
           />
           <div className='svg-content' style={{display: hoveredIcon === 'icon2' ? 'block' : 'none'}}>
             <h1>60 - 150 Eur</h1>
-            <p>Base Option</p>
+            <h3>Base Option</h3>
           </div>
         </div>
         <div className="svg-im">
@@ -413,7 +413,7 @@ const scrollToFlightDetail = (id) => {
           />
           <div className='svg-content' style={{display: hoveredIcon === 'icon3' ? 'block' : 'none'}}>
             <h1>160 - 300 Eur</h1>
-            <p>Luxurious Option</p>
+            <h3>Luxurious Option</h3>
           </div>
         </div>
 
