@@ -6,6 +6,10 @@ import 'leaflet/dist/leaflet.css';
 import startMarkerImg from '/Green_Arrow_Down.svg';  // Adjust the path according to your folder structure
 // import endMarkerImg from '/patatas_bravas.svg';
 import endMarkerImg from '/Red_Arrow_Down.svg';
+import lukasTotal from '/total.svg'
+import hotelBudget from '/budget.svg'
+import hotelNormal from '/normal.svg'
+import hotelExpensive from '/expensive.svg'
 
 import './App.css';
 import {useMap, MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
@@ -83,6 +87,7 @@ function App() {
   const [origin, setOrigin] = useState({});
   const [routes, setRoutes] = useState([]);
   const [activeRoute, setActiveRoute] = useState(null);
+  const [hoveredIcon, setHoveredIcon] = useState('');
 
 
   const fetchCities = async (inputValue) => {
@@ -299,7 +304,49 @@ const scrollToFlightDetail = (id) => {
           </div>
         ))}
       </div>
+      <div className="svg-container">
+        <div className="svg-im">
+          <img
+            src={hotelBudget}
+            alt="Icon 1 Description"
+            className={`example-icon ${hoveredIcon === 'icon1' ? 'hovered' : ''}`}
+            onMouseEnter={() => setHoveredIcon('icon1')}
+            onMouseLeave={() => setHoveredIcon('')}
+          />
+          <div className='svg-content' style={{display: hoveredIcon === 'icon1' ? 'block' : 'none'}}>
+            <h1>50% Price</h1>
+            <p>Normal Option</p>
+          </div>
+        </div>
+        <div className="svg-im">
+          <img
+            src={hotelNormal}
+            alt="Icon 2 Description"
+            className={`example-icon ${hoveredIcon === 'icon2' ? 'hovered' : ''}`}
+            onMouseEnter={() => setHoveredIcon('icon2')}
+            onMouseLeave={() => setHoveredIcon('')}
+          />
+          <div className='svg-content' style={{display: hoveredIcon === 'icon2' ? 'block' : 'none'}}>
+            <h1>100% Price</h1>
+            <p>Normal Option</p>
+          </div>
+        </div>
+        <div className="svg-im">
+          <img
+            src={hotelExpensive}
+            alt="Icon 3 Description"
+            className={`example-icon ${hoveredIcon === 'icon3' ? 'hovered' : ''}`}
+            onMouseEnter={() => setHoveredIcon('icon3')}
+            onMouseLeave={() => setHoveredIcon('')}
+          />
+          <div className='svg-content' style={{display: hoveredIcon === 'icon3' ? 'block' : 'none'}}>
+            <h1>150% Price</h1>
+            <p>Expensive Option</p>
+          </div>
+        </div>
 
+
+      </div>
 
     </div>
   );

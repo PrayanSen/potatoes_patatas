@@ -5,6 +5,46 @@
   text-align: center;
 }
 
+.svg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.example-icon {
+  width: 17vw;
+  height: auto;
+  margin: 120px 20px;
+  transition: transform 0.3s ease; /* Smooth transition for transform */
+  position: relative; /* Needed for absolute positioning of the popup */
+}
+
+.example-icon.hovered {
+  transform: scale(1.5); /* Enlarge the SVG */
+}
+
+.example-icon:hover::after {
+  /* content: attr(alt); Use the alt attribute to show text */
+  content: "Sample Text"; /* Change this to confirm the popup appears */
+
+  position: absolute;
+  bottom: -30px; /* Position the text below the SVG */
+  left: 50%;
+  transform: translateX(-50%); /* Center the text */
+  white-space: nowrap; /* Prevent the text from wrapping */
+  background-color: black;
+  color: white;
+  /* color:black; */
+  /* padding: 5px 10px; */
+  border-radius: 50px;
+  font-size: 50px;
+  z-index: 10; /* Make sure the popup is on top of other content */
+}
+.lukas-total {
+  width: 55vw; 
+  height: auto; 
+}
 .route-details-container {
   display: flex;
   flex-direction: column;
@@ -108,3 +148,23 @@
 .read-the-docs {
   color: #888;
 }
+
+.svg-content {
+  position:absolute;
+  top:0;
+  left:0;
+  color:black;
+  background-color: rgba(128, 128, 128, 0.5); /* Gray background with 50% transparency */
+  width: 100%;
+}
+
+.svg-container {
+  width: 100%; /* Adjust based on your layout */
+}
+
+.svg-im {
+  position: relative;
+  display: inline-block; /* or block depending on your layout */
+}
+
+
