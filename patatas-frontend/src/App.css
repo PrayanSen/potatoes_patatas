@@ -1,0 +1,110 @@
+#root {
+  /* max-width: 1280px; */
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.route-details-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.route-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 30px;
+  width: 80%;
+  display: flex; /* Makes children (flight cards) align horizontally */
+  align-items: center; /* Aligns children vertically in the middle */
+}
+
+.flight-card {
+  position: relative;
+  /* background: #f9f9f9; */
+  background-color: #f0f0f0; /* Default gray background for non-highlighted cards */
+  transition: background-color 0.3s ease; /* Smooth transition for background color change */
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 0 30px; /* Adjusts spacing around each card */
+  flex: 0 1 auto; /* Flexbox properties to manage size */
+  color: #333;
+}
+.highlight {
+  background-color: yellow; 
+  transition: background-color 0.3s ease;
+}
+.flight-card:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  font-size: 24px;
+  /* color: #333; */
+  color: white;
+  transform: translate(100%, -50%);
+}
+
+.flight-card:last-child::after {
+  display: none;
+}
+.flight-card h4 {
+  margin-top: 0;
+  color: #333;
+}
+.select-container {
+  display: flex;        /* Enables Flexbox */
+  align-items: center;  /* Aligns items vertically in the center */
+  justify-content: center; /* Centers items horizontally */
+  gap: 20px;            /* Space between each item */
+}
+
+.selection {
+  width: 30vw;
+}
+
+.head-container {
+  display: flex;        /* Enables Flexbox */
+  align-items: center;  /* Aligns items vertically in the center */
+  justify-content: center; /* Centers items horizontally */
+  gap: 20px;            /* Space between each item */
+}
+
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
