@@ -21,6 +21,37 @@ import 'leaflet-polylinedecorator';
 
 const colors = ["red", "blue", "green", "purple", "orange", "cyan", "magenta", "lime", "pink", "teal"]; // Extend this list based on the expected number of routes
 
+const cities = {
+  'Barcelona': {"label": "Barcelona", "value": {"lat": 41.2971, "lng": 2.07846}},
+  'Paris': {"label": "Paris", "value": {"lat": 49.454399, "lng": 2.11278}},
+  'Rome': {"label": "Rome", "value": {"lat": 53.745098, "lng": -2.88306}},
+  'Amsterdam': {"label": "Amsterdam", "value": {"lat": 52.308601, "lng": 4.76389}},
+  'Munich': {"label": "Munich", "value": {"lat": 48.353802, "lng": 11.7861}},
+  'London': {"label": "London", "value": {"lat": 51.874699, "lng": -0.368333}},
+  'Prague': {"label": "Prague", "value": {"lat": 50.1008, "lng": 14.26}},
+  'Madrid': {"label": "Madrid", "value": {"lat": 40.471926, "lng": -3.56264}},
+  'Vienna': {"label": "Vienna", "value": {"lat": 48.110298, "lng": 16.5697}},
+  'Berlin': {"label": "Berlin", "value": {"lat": 52.362247, "lng": 13.500672}},
+  'Lisbon': {"label": "Lisbon", "value": {"lat": 38.7813, "lng": -9.13592}},
+  'Budapest': {"label": "Budapest", "value": {"lat": 47.42976, "lng": 19.261093}},
+  'Brussels': {"label": "Brussels", "value": {"lat": 50.901402, "lng": 4.48444}},
+  'Dublin': {"label": "Dublin", "value": {"lat": 53.428713, "lng": -6.262121}},
+  'Milan': {"label": "Milan", "value": {"lat": 45.673901, "lng": 9.70417}},
+  'Florence': {"label": "Florence", "value": {"lat": 43.7696, "lng": 11.2558}},
+  'Zurich': {"label": "Zurich", "value": {"lat": 47.3769, "lng": 8.5417}}
+}
+// Get coordinates from the city name
+  // Generic function to get coordinates for a given location object
+  const getCoordinates = (location) => {
+    if (location.value && location.value.lat && location.value.lng) {
+      return [location.value.lat, location.value.lng];
+    } else if (location.label && cities[location.label]) {
+      return [cities[location.label].value.lat, cities[location.label].value.lng];
+    }
+    return null; // Return null if nothing is applicable
+  };
+
+
 function getColor(index) {
   return colors[index % colors.length]; // Loop through the colors array cyclically
 }
@@ -224,17 +255,23 @@ const scrollToFlightDetail = (id) => {
       <br/>
       <MapContainer center={[50, 10]} zoom={4} scrollWheelZoom={true} style={{ height: '70vh', width: '100%' }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {origin && origin.value && origin.value.lat && origin.value.lng &&(
-          <Marker position={[origin.value.lat, origin.value.lng]} icon={startIcon}>
+        {getCoordinates(origin) && (
+          <Marker 
+            position={getCoordinates(origin)} 
+            icon={startIcon}
+          >
             <Popup>
-              Start of Trip
+              Start of Trip: {origin.label || "Unknown Location"}
             </Popup>
           </Marker>
         )}
-        {destination && destination.value && destination.value.lat && destination.value.lng &&(
-          <Marker position={[destination.value.lat, destination.value.lng]} icon={endIcon}>
+        {getCoordinates(destination) && (
+          <Marker 
+            position={getCoordinates(destination)} 
+            icon={endIcon}
+          >
             <Popup>
-              End of Trip
+              End of Trip: {destination.label || "Unknown Location"}
             </Popup>
           </Marker>
         )}

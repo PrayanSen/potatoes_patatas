@@ -191,7 +191,7 @@ def find_transit_routes(G, source, destination):
 
 @app.route('/search-cities', methods=['GET'])
 def search_cities():
-    # print("API Request for city query sent")
+    print("API Request for city query sent")
     query = request.args.get('query')
     url = f'https://api.opencagedata.com/geocode/v1/json?q={query}&key={opencage_api_key}'
     try:
