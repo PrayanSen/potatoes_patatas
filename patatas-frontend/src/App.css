@@ -57,6 +57,7 @@
   padding: 20px;
   margin-bottom: 30px;
   width: 80%;
+  gap: 25px;
   display: flex; /* Makes children (flight cards) align horizontally */
   align-items: center; /* Aligns children vertically in the middle */
 }
@@ -180,3 +181,16 @@
 }
 
 
+.future-im {
+  /* width: 50vw; */
+  display: grid;
+  place-items: center; /* Center horizontally and vertically */
+  height: 50vh; /* Example height */
+}
+
+.future-img {
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  margin: 0 auto; /* Auto margins on left and right */
+
+}

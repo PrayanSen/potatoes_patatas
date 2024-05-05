@@ -1,6 +1,6 @@
 
 .profile-container {
-  background: gray;
+  background: #31353b;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -11,6 +11,7 @@
   display: flex;
   align-items: center;
   gap: 60px;
+  font-size: 25px;
 }
 
 .profile-image {
@@ -33,12 +34,13 @@
   padding: 5px 10px;
   border-radius: 20px;
   width: 5vw;
+  font-size: 20px;
 }
 
 .profile-description {
   margin-top: 15px;
   padding: 10px;
   margin-left: 200px;
-  font-size: 18px;
+  font-size: 25px;
   color: lightgray;
 }

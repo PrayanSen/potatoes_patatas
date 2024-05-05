@@ -11,6 +11,7 @@ import hotelBudget from '/budget.svg'
 import hotelNormal from '/normal.svg'
 import hotelExpensive from '/expensive.svg'
 import CreatableSelect from 'react-select/creatable';
+import potatoFuture from '/potato-future.webp'
 
 import './App.css';
 import {useMap, MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
@@ -41,7 +42,7 @@ const cities = {
 }
 
 const user = {
-  name: 'Max Mustermann',
+  name: 'Samuel Exampleman',
   imageUrl: '/potato.svg', // Adjust the path to your profile image
   interests: ["hiking", "architecture", "opera", "beach", "skiing", "history", "clubbing", "football", "concerts", "pizza", "beer"]
 };
@@ -382,14 +383,16 @@ const scrollToFlightDetail = async (id) => {
       <div className="route-details-container">
         {routes.map((route, index) => (
           <div key={`route-${index}`} className="route-card">
-            <h4>Route {index + 1}</h4>
+            {/* <h4>Route {index + 1}</h4> */}
             {Object.entries(route).map(([key, value]) => {
               if (key !== "flights") { // Skip the 'flights' key
                 let routeDisplayValue;
                 // Check if value is an object and handle it appropriately
                 if (typeof value === 'object' && value !== null) {
                   // Assuming 'value' might be an object with properties 'label' and 'value'
-                  routeDisplayValue = `${value.label} (${value.value.lat}, ${value.value.lng})`; // Format if it's an object with specific structure
+                  // routeDisplayValue = `${value.label} (${value.value.lat}, ${value.value.lng})`; // Format if it's an object with specific structure
+                  routeDisplayValue = `${value.label}`; // Format if it's an object with specific structure
+               
                 } else {
                   routeDisplayValue = value; // It's not an object, so display it directly
                 }
@@ -413,7 +416,9 @@ const scrollToFlightDetail = async (id) => {
                   let displayValue;
                   if (typeof value === 'object' && value !== null) {
                     // Assuming 'value' might be an object with properties 'label' and 'value'
-                    displayValue = `${value.label} (${value.value.lat}, ${value.value.lng})`; // Adjust this according to what 'value' actually contains
+                    // displayValue = `${value.label} (${value.value.lat}, ${value.value.lng})`; // Adjust this according to what 'value' actually contains
+                    displayValue = `${value.label}`; // Adjust this according to what 'value' actually contains
+                    
                     console.log(displayValue);
                   } else {
                     // It's not an object, so we can display it directly
@@ -430,6 +435,14 @@ const scrollToFlightDetail = async (id) => {
           </div>
         ))}
       </div>
+      <div className="future-im">
+          <img
+            src={potatoFuture}
+            alt="Icon 3 Description"
+            className="future-img"
+          />
+
+        </div>
       <div className="svg-container">
         <div className="svg-im">
           <img
