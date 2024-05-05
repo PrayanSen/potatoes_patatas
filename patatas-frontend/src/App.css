@@ -67,6 +67,7 @@
 
 .route-card li {
   margin-bottom: 10px;  /* Adds space between list items */
+  gap: 10px;
 }
 
 .route-card li strong {

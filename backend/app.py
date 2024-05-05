@@ -124,6 +124,37 @@ events_by_city = {
     ]
 }
 
+people_similarities = {'Charlotte': ['John', 'Joseph', 'Andrew', 'Ethan', 'Sophia', 'Grace'],
+ 'Mia': ['Benjamin', 'Andrew', 'Joseph', 'Abigail', 'Sofia', 'Ava'],
+ 'Olivia': ['Michael', 'William', 'Ella', 'Elizabeth', 'Samuel', 'Ethan'],
+ 'Emily': ['James', 'Andrew', 'Joseph', 'Amelia', 'Evelyn', 'Ella'],
+ 'Alexander': ['Alexander', 'Abigail', 'Sofia', 'Ava', 'Daniel', 'Harper'],
+ 'Grace': ['Grace', 'Ava', 'William', 'Ella', 'Elizabeth', 'Abigail'],
+ 'Sofia': ['Sofia', 'Ella', 'Elizabeth', 'Harper', 'Matthew', 'Benjamin'],
+ 'Elizabeth': ['Elizabeth', 'Abigail', 'Sofia', 'Ethan', 'William', 'Olivia'],
+ 'Harper': ['Harper', 'Sofia', 'Abigail', 'Grace', 'Sophia', 'Ava'],
+ 'Joseph': ['Joseph', 'John', 'Charlotte', 'Ethan', 'Mia', 'Benjamin'],
+ 'Samuel': ['Henry', 'Olivia', 'Michael', 'Ava', 'William', 'Ella'],
+ 'Ethan': ['Ella', 'Elizabeth', 'Andrew', 'Joseph', 'John', 'Charlotte'],
+ 'Ava': ['Grace', 'Sophia', 'William', 'Samuel', 'Abigail', 'Sofia'],
+ 'Henry': ['Samuel', 'Olivia', 'Michael', 'Andrew', 'Joseph', 'Ethan'],
+ 'William': ['Olivia', 'Michael', 'Ella', 'Elizabeth', 'Ava', 'Sophia'],
+ 'Isabella': ['Sofia', 'Abigail', 'Andrew', 'Joseph', 'Harper', 'Matthew'],
+ 'Evelyn': ['William', 'Ava', 'Olivia', 'Michael', 'Sophia', 'Grace'],
+ 'Jacob': ['Ethan', 'William', 'Amelia', 'Daniel', 'Ella', 'Elizabeth'],
+ 'Daniel': ['Abigail', 'Sofia', 'Elizabeth', 'Ella', 'Ava', 'Samuel'],
+ 'Amelia': ['Ethan', 'Ella', 'Elizabeth', 'William', 'Emily', 'James'],
+ 'John': ['John', 'Joseph', 'Andrew', 'Ethan', 'Sophia', 'Grace'],
+ 'Benjamin': ['Benjamin', 'Andrew', 'Joseph', 'Abigail', 'Sofia', 'Ava'],
+ 'Michael': ['Michael', 'William', 'Ella', 'Elizabeth', 'Samuel', 'Ethan'],
+ 'James': ['James', 'Andrew', 'Joseph', 'Amelia', 'Evelyn', 'Ella'],
+ 'David': ['Alexander', 'Abigail', 'Sofia', 'Ava', 'Daniel', 'Harper'],
+ 'Sophia': ['Grace', 'Ava', 'William', 'Ella', 'Elizabeth', 'Abigail'],
+ 'Abigail': ['Sofia', 'Ella', 'Elizabeth', 'Harper', 'Matthew', 'Benjamin'],
+ 'Ella': ['Elizabeth', 'Abigail', 'Sofia', 'Ethan', 'William', 'Olivia'],
+ 'Matthew': ['Harper', 'Sofia', 'Abigail', 'Grace', 'Sophia', 'Ava'],
+ 'Andrew': ['Joseph', 'John', 'Charlotte', 'Ethan', 'Mia', 'Benjamin']}
+
 similarities = {('Barcelona', 'hiking'): -0.07356697701118468,
  ('Barcelona', 'architecture'): 0.10132157119581477,
  ('Barcelona', 'opera'): 0.0750066973931789,
@@ -511,6 +542,27 @@ def sort_routes(interests,routes,similarities):
     
     sorted_routes.insert(0, routes[0])
     return sorted_routes
+
+@app.route('/find-similar-travelers', methods=['POST'])
+def find_similar_travelers():
+    data = request.json  # Get JSON data sent by the frontend
+    user = data['username']
+    flights = data['flights']  # Assuming frontend sends this as a list of dictionaries
+
+    trip_takers = ['Olivia', 'Michael', 'Rohan']
+    ret = []
+    if user in people_similarities:
+        # Find intersection of similar people and trip takers
+        similar_people = set(people_similarities[user])
+        ret = list(similar_people.intersection(trip_takers))
+    print(f"{ret=}")
+    
+    # ret = []
+    # for taker in trip_takers:
+    #     if taker in people_similarities[user]:
+    #         ret.append(taker)
+    return make_response(ret)
+    
 
 
 @app.route('/search-cities', methods=['GET'])

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AsyncSelect from 'react-select/async';
-import L from 'leaflet';
+import L, { popup } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 // import startMarkerImg from '/potato.svg';  // Adjust the path according to your folder structure
 import startMarkerImg from '/Green_Arrow_Down.svg';  // Adjust the path according to your folder structure
@@ -198,7 +198,7 @@ function App() {
         }
     }
 };
-const scrollToFlightDetail = (id) => {
+const scrollToFlightDetail = async (id) => {
   const element = document.getElementById(id);
   if (element) {
     element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -210,6 +210,32 @@ const scrollToFlightDetail = (id) => {
       top: rect.top + window.scrollY + 20, // Adjust '20' to position the popup below the element
       left: rect.left + window.scrollX + 20  // Adjust '20' to position the popup to the right of the element
     });
+
+    // Ask backend who the most similar people to this individual are
+    // See which of those are also taking this trip
+    // Prepare data for the backend
+    const requestBody = {
+      username: "Samuel",
+      flights: [{1: 'a'},{2: 'b'}],
+    };
+    try {
+      // API call to the backend to fetch similar people
+      const response = await axios.post('http://localhost:5000/find-similar-travelers', requestBody);
+      const similarTravelers = response.data; // Assuming the backend returns an object with a 'names' array
+      const message = similarTravelers.length > 0 
+        ? `HEY! ${similarTravelers.join(", ")} are also taking this trip!`
+        : "No similar travelers on this trip.";
+      
+      setPopupMessage(message);
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 8000); // Optionally hide the popup after 5 seconds
+    } catch (error) {
+      console.log(error);
+      console.error('Error fetching similar travelers:', error);
+      setPopupMessage("Failed to fetch similar travelers.");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 5000);
+    }
     setShowPopup(true);
     // setTimeout(() => setShowPopup(false), 5000); // Hide the popup after 5 seconds
   }
@@ -457,13 +483,14 @@ const scrollToFlightDetail = (id) => {
           padding: '15px',
           borderRadius: '10px',
           backgroundColor: '#FFFFFF',
-          fontSize: '20px',
+          fontSize: '26px',
           color: 'black',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
           animation: 'fadeInMoveUp 0.5s ease-out',
           zIndex: 1001  // Ensure it's above other content
         }}>
-          HEY! Rohan is also taking this trip!
+            {/* HEY! Rohan is also taking this trip! */}
+            {popupMessage}
         </div>
       )}
       {/* More of your component markup */}
