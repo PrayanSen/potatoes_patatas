@@ -60,7 +60,18 @@
   display: flex; /* Makes children (flight cards) align horizontally */
   align-items: center; /* Aligns children vertically in the middle */
 }
+.route-card ul {
+  list-style-type: none;  /* Removes default list bullets */
+  padding-left: 0;       /* Adjusts padding to align content with the rest of the layout */
+}
 
+.route-card li {
+  margin-bottom: 10px;  /* Adds space between list items */
+}
+
+.route-card li strong {
+  margin-right: 5px;  /* Adds a small space between the key and the value */
+}
 .flight-card {
   position: relative;
   /* background: #f9f9f9; */
@@ -154,7 +165,7 @@
   top:0;
   left:0;
   color:black;
-  background-color: rgba(128, 128, 128, 0.5); /* Gray background with 50% transparency */
+  background-color: rgba(128, 128, 128, 0.9); /* Gray background with 50% transparency */
   width: 100%;
 }
 

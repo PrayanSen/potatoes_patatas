@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AsyncSelect from 'react-select/async';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -16,8 +16,7 @@ import './App.css';
 import {useMap, MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import axios from 'axios';
 import 'leaflet-polylinedecorator';
-// Define marker icons
-
+import UserProfile from './components/UserProfile';
 
 const colors = ["red", "blue", "green", "purple", "orange", "cyan", "magenta", "lime", "pink", "teal"]; // Extend this list based on the expected number of routes
 
@@ -40,6 +39,13 @@ const cities = {
   'Florence': {"label": "Florence", "value": {"lat": 43.7696, "lng": 11.2558}},
   'Zurich': {"label": "Zurich", "value": {"lat": 47.3769, "lng": 8.5417}}
 }
+
+const user = {
+  name: 'Max Mustermann',
+  imageUrl: '/potato.svg', // Adjust the path to your profile image
+  interests: ["hiking", "architecture", "opera", "beach", "skiing", "history", "clubbing", "football", "concerts", "pizza", "beer"]
+};
+
 // Get coordinates from the city name
   // Generic function to get coordinates for a given location object
   const getCoordinates = (location) => {
@@ -122,7 +128,20 @@ function App() {
   const [hoveredIcon, setHoveredIcon] = useState('');
   const [visibleRoutes, setVisibleRoutes] = useState({});  // State to manage visibility of each route
   const [activeRouteIndex, setActiveRouteIndex] = useState(null); // Track the index of the active route
+  const [popupMessage, setPopupMessage] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
 
+
+  useEffect(() => {
+    // When activeRoute changes and showPopup is true, setup a timeout to hide the popup after a few seconds
+    if (showPopup) {
+      const timeout = setTimeout(() => {
+        setShowPopup(false);
+      }, 5000);  // Popup shows for 3 seconds
+      return () => clearTimeout(timeout);
+    }
+  }, [activeRoute, showPopup]);  // Depend on activeRoute and showPopup to control the effect
 
   const fetchCities = async (inputValue) => {
     if (!inputValue) return [];
@@ -184,6 +203,15 @@ const scrollToFlightDetail = (id) => {
   if (element) {
     element.scrollIntoView({ behavior: "smooth", block: "start" });
     element.classList.add('highlight');
+    // Set the popup message and show the popup
+    // setPopupMessage('HEY! Rohan is also taking this trip!');
+    const rect = element.getBoundingClientRect();
+    setPopupPosition({
+      top: rect.top + window.scrollY + 20, // Adjust '20' to position the popup below the element
+      left: rect.left + window.scrollX + 20  // Adjust '20' to position the popup to the right of the element
+    });
+    setShowPopup(true);
+    // setTimeout(() => setShowPopup(false), 5000); // Hide the popup after 5 seconds
   }
 };
   // Custom styles for react-select
@@ -419,7 +447,40 @@ const scrollToFlightDetail = (id) => {
 
 
       </div>
-
+      <UserProfile user={user} />
+      {showPopup && (
+        <div className="popup-message" style={{
+          position: 'absolute',
+          top: `${popupPosition.top}px`,
+          left: `${popupPosition.left}px`,
+          border: '1px solid #007BFF',
+          padding: '15px',
+          borderRadius: '10px',
+          backgroundColor: '#FFFFFF',
+          fontSize: '20px',
+          color: 'black',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          animation: 'fadeInMoveUp 0.5s ease-out',
+          zIndex: 1001  // Ensure it's above other content
+        }}>
+          HEY! Rohan is also taking this trip!
+        </div>
+      )}
+      {/* More of your component markup */}
+      <style>
+        {`
+          @keyframes fadeInMoveUp {
+            0% {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 }

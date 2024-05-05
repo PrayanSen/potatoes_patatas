@@ -1,0 +1,44 @@
+
+.profile-container {
+  background: gray;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.profile-image {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.interests-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding-top: 30px;    
+  padding-left: 10vw;
+}
+
+.interest-item {
+  background: purple;
+  padding: 5px 10px;
+  border-radius: 20px;
+  width: 5vw;
+}
+
+.profile-description {
+  margin-top: 15px;
+  padding: 10px;
+  margin-left: 200px;
+  font-size: 18px;
+  color: lightgray;
+}
