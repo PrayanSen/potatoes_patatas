@@ -564,7 +564,7 @@ def get_routes():
 
 
     for route in transit_routes[1:]:
-        route['Total Train Travel Time (minutes)'] = calculate_total_train_travel_time(route['route_id'], transit_routes) # this is now our train routes
+        route['Total Train Travel Time (hours)'] = calculate_total_train_travel_time(route['route_id'], transit_routes) # this is now our train routes
         # print(f"{route['total_travel_time (minutes)']=}")
 
 
